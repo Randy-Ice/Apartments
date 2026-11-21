@@ -1,4 +1,14 @@
 
+using Apartments.Data;
+using Apartments.Middleware;
+using DotNetEnv;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
+using Serilog;
+
 namespace Apartments
 {
     public class Program
@@ -9,9 +19,49 @@ namespace Apartments
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            //Odata
+            builder.Services.AddControllers()
+                .AddOData(options => options.Select().Filter().OrderBy().Expand().SetMaxTop(100).Count());
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+
+            //Connection string
+            Env.Load();
+            var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+            //Database
+            builder.Services.AddDbContext<ProjectDB>(
+                options => options.UseSqlServer(connectionString));
+            //Auth
+            builder.Services.AddDbContext<AuthDB>(
+                options => options.UseSqlServer(connectionString));
+            builder.Services.AddAuthentication();
+            builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+                .AddEntityFrameworkStores<AuthDB>();
+            //logging
+            var logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .WriteTo.File("Logs/logs.txt", rollingInterval: RollingInterval.Day)
+                .MinimumLevel.Information() //.Debug, .Information, .Warning, .Error, .Fatal
+                .CreateLogger();
+            builder.Logging.ClearProviders();
+            builder.Logging.AddSerilog(logger);
+
+            //Health + rate limit
+            builder.Services.AddHealthChecks();
+            builder.Services.AddRateLimiter(options =>
+            {
+                options.AddFixedWindowLimiter("fixed", opt =>
+                {
+                    opt.Window = TimeSpan.FromMinutes(1);
+                    opt.PermitLimit = 100;
+                    opt.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+                    opt.QueueLimit = 5;
+                });
+                options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+            });
+
+
 
             var app = builder.Build();
 
@@ -19,11 +69,15 @@ namespace Apartments
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
+                app.MapScalarApiReference();
             }
-
+            app.UseMiddleware<HandleExceltionsMiddleware>();
+            app.UseRateLimiter();
             app.UseHttpsRedirection();
-
+            app.UseAuthentication();
             app.UseAuthorization();
+            app.MapHealthChecks("/health");
+            app.MapIdentityApi<IdentityUser>();
 
 
             app.MapControllers();
