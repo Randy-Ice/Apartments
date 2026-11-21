@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Apartments.Features.V1.Addresses;
+using Microsoft.EntityFrameworkCore;
 
 namespace Apartments.Data
 {
@@ -8,5 +9,6 @@ namespace Apartments.Data
         {
 
         }
+        public DbSet<Address> Addresses { get; set; }
     }
 }
