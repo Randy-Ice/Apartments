@@ -1,7 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace Apartments.Features.V1.Tenants
 {
+    [Index(nameof(FirstName))]
+    [Index(nameof(Email))]
     public class Tenant
     {
         public Guid Id { get; set; }
