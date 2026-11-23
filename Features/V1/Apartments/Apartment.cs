@@ -21,10 +21,12 @@ namespace Apartments.Features.V1.Apartments
         [Range(1, 50)]
         public byte ApartmentNumber { get; set; }
         public Guid AddressId { get; set; }
+        //public List<ApartmentImages> Images { get; set; }
+        public string? ImageURL { get; set; }
 
         [Required]
         [Precision(6, 2)] //1234.56
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         [Required]
         public byte Beds { get; set; }

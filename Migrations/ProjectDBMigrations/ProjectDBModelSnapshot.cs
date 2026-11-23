@@ -51,6 +51,86 @@ namespace Apartments.Migrations.ProjectDBMigrations
                     b.ToTable("Addresses");
                 });
 
+            modelBuilder.Entity("Apartments.Features.V1.Apartments.Apartment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AddressId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte>("ApartmentNumber")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("ApartmentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<byte>("Bathrooms")
+                        .HasColumnType("tinyint");
+
+                    b.Property<byte>("Beds")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasEvCharging")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasGym")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasParking")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasPet")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasPool")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ImageURL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PetNote")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Price")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("float(6)");
+
+                    b.Property<string>("SpotsAvailable")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<short>("SquareFeet")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("ApartmentType");
+
+                    b.HasIndex("Beds");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("Price");
+
+                    b.ToTable("Apartments");
+                });
+
             modelBuilder.Entity("Apartments.Features.V1.Tenants.Tenant", b =>
                 {
                     b.Property<Guid>("Id")
@@ -80,6 +160,17 @@ namespace Apartments.Migrations.ProjectDBMigrations
                     b.HasIndex("FirstName");
 
                     b.ToTable("Tenants");
+                });
+
+            modelBuilder.Entity("Apartments.Features.V1.Apartments.Apartment", b =>
+                {
+                    b.HasOne("Apartments.Features.V1.Addresses.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
                 });
 #pragma warning restore 612, 618
         }

@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\V1\Apartments\DTO\" />
     <Folder Include="Logs\" />
   </ItemGroup>
 
