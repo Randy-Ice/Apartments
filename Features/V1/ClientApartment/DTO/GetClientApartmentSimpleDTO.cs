@@ -8,7 +8,7 @@
 
         public Guid ApartmentId { get; set; }
 
-        public DateOnly CreatedAt { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow);
+        public DateOnly CreatedAt { get; set; }
 
 
     }
