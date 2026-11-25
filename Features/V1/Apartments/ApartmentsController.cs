@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Apartments.Features.V1.Apartments
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class ApartmentsController : ControllerBase
     {
@@ -24,6 +24,7 @@ namespace Apartments.Features.V1.Apartments
             var apartments = await _db.Apartments
                 .Include(x => x.Address)
                 .Where(x => x.IsAvailable)
+                .AsNoTracking()
                 .ToListAsync();
             return Ok(apartments.Adapt<IEnumerable<GetApartmentSimpleDTO>>());
         }
