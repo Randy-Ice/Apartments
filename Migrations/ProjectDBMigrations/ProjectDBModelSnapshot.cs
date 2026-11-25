@@ -106,9 +106,9 @@ namespace Apartments.Migrations.ProjectDBMigrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Price")
+                    b.Property<decimal>("Price")
                         .HasPrecision(6, 2)
-                        .HasColumnType("float(6)");
+                        .HasColumnType("decimal(6,2)");
 
                     b.Property<string>("SpotsAvailable")
                         .HasColumnType("nvarchar(max)");
@@ -129,6 +129,37 @@ namespace Apartments.Migrations.ProjectDBMigrations
                     b.HasIndex("Price");
 
                     b.ToTable("Apartments");
+                });
+
+            modelBuilder.Entity("Apartments.Features.V1.ClientApartment.ClientToApartment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ApartmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("CreatedAt")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ManagementContact")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApartmentId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("ClientToApartment");
                 });
 
             modelBuilder.Entity("Apartments.Features.V1.Tenants.Tenant", b =>
@@ -171,6 +202,25 @@ namespace Apartments.Migrations.ProjectDBMigrations
                         .IsRequired();
 
                     b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("Apartments.Features.V1.ClientApartment.ClientToApartment", b =>
+                {
+                    b.HasOne("Apartments.Features.V1.Apartments.Apartment", "Apartment")
+                        .WithMany()
+                        .HasForeignKey("ApartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Apartments.Features.V1.Tenants.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Apartment");
+
+                    b.Navigation("Tenant");
                 });
 #pragma warning restore 612, 618
         }

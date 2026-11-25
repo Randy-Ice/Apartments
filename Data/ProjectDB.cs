@@ -1,5 +1,6 @@
 ﻿using Apartments.Features.V1.Addresses;
 using Apartments.Features.V1.Apartments;
+using Apartments.Features.V1.ClientApartment;
 using Apartments.Features.V1.Tenants;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,5 +15,6 @@ namespace Apartments.Data
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Tenant> Tenants { get; set; }
         public DbSet<Apartment> Apartments { get; set; }
+        public DbSet<ClientToApartment> ClientToApartment { get; set; }
     }
 }
